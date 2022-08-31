@@ -3,12 +3,12 @@ Sub ForEachCell()
     Dim Result() As String
     Dim URL() As String
     Dim Count As Integer
-    Dim ConcatenatedUrl As String
+    Dim ConcatenatedUrl, LastChar As String
     Dim lastRow, i As Long
     
     lastRow = Cells(Rows.Count, 1).End(xlUp).Row
     
-    For Each Cell In Sheets("404 CDICollege English FinalSql").Range("A2:A5")
+    For Each Cell In Sheets("404 CDICollege English FinalSql").Range("D7:D50")
         Result() = Split(Cell.Value, "//")
         UrlArr = Split(Result(1), "/")
         Count = UBound(UrlArr)
@@ -19,8 +19,12 @@ Sub ForEachCell()
             ConcatenatedUrl = ConcatenatedUrl & "/" & UrlArr(i)
         Next i
         
-        'only append if Count > 1 for edge case when Cell.Value = https://www.cdicollege.ca/
-        If Count > 1 Then
+        LastChar = Right(ConcatenatedUrl, 1)
+        
+        'only append if Count = 1 (i.e. there is only one part of URL) and the last character does not already have "/" at end for edge case when Cell.Value = https://www.cdicollege.ca/
+        If Count = 1 And LastChar <> "/" Then
+            ConcatenatedUrl = ConcatenatedUrl & "/" 'append last forward slash
+        ElseIf Count > 1 And LastChar <> "/" Then
             ConcatenatedUrl = ConcatenatedUrl & "/" 'append last forward slash
         End If
         
@@ -43,7 +47,7 @@ Sub ForEachCell()
         'Next i
         
         'Cell.Offset(0, 5).Value = Split(Cell.Value, "/")
-        Cell.Offset(0, 6).Value = ConcatenatedUrl
+        Cell.Offset(0, 2).Value = ConcatenatedUrl
         'Cell.Offset(0, 6).Value = GetPageTitle(ConcatenatedUrl)
     Next Cell
     
